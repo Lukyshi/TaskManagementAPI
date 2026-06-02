@@ -1,22 +1,47 @@
-const { parse } = require('node:path');
-const prisma = require('../prisma/client');
+
+import prisma from '../config/prisma.js';
+import { getPagination } from '../utils/pagination.js';
+
 
 // find all tasks
-exports.getAllTasks = async (userId) => {
-  return await prisma.task.findMany({
-    where: {
-      userId,
-      deletedAt: null
-    },
-    orderBy: {
-      createdAt: 'desc'
+const getAllTasks = async (userId, page, limit) => {
+  const { skip, take } = getPagination(page, limit);
+
+  const [tasks, total] = await Promise.all([
+    prisma.task.findMany({
+      where: {
+        userId,
+        deletedAt: null
+      },
+      orderBy:{
+        createdAt: 'desc'
+      },
+      skip, 
+      take
+    }),
+
+    prismam.tasl.coount({
+      where: {
+        userId, 
+        deletedAt: null
+      }
+    })
+  ]);
+
+  return {
+    tasks,
+    pagination: {
+    page: Number(page) || 1,
+    limit: Number(limit) || 10,
+    total,
+    totalPages: Math.ceil(total / (limit || 10))
     }
-  });
+  };
 };
 
 
 // find task by id
-exports.getTaskById =  async (id, userId) => {
+const getTaskById =  async (id, userId) => {
   return await prisma.task.findFirst({
     where: {
       id,
@@ -32,7 +57,7 @@ exports.getTaskById =  async (id, userId) => {
 };
 
 // create task
-exports.createTask = async (data) => {
+const createTask = async (data) => {
   if(!data.title || data.title.trim() === '') {
     throw new Error('Title is required');
   }
@@ -48,7 +73,7 @@ exports.createTask = async (data) => {
 };
 
 // update task
-exports.updateTask = async (id, userId, data) => {
+const updateTask = async (id, userId, data) => {
   const task = await prisma.task.findFirst({
     where: {
       where: {
@@ -76,7 +101,7 @@ exports.updateTask = async (id, userId, data) => {
 };
 
 // delete task
-exports.deleteTask = async (id, userId) => {
+const deleteTask = async (id, userId) => {
   const task = await prisma.task.findFirst({
     where: {
       id: Number(id),
@@ -99,3 +124,10 @@ exports.deleteTask = async (id, userId) => {
   });
 };
 
+export default {
+  getAllTasks,
+  getTaskById,
+  createTask,
+  updateTask,
+  deleteTask
+}

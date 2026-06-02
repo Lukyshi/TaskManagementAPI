@@ -1,15 +1,11 @@
-const prisma = require('../prisma/client');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+import prisma from '../config/prisma.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { generateToken } from '../utils/jwt.js';
 
 // register user
-exports.register = async (data) => {
+const register = async (data) => {
   const { email, password, name} = data;
-
-  //vaidate
-  if (!email || !password || !name) {
-    throw new Error('Email, password and name are required');
-  }
 
   //check if user exists
   const existingUser = await prisma.user.findUnique({
@@ -42,7 +38,7 @@ exports.register = async (data) => {
   };
 };
 
-exports.login = async (data) => {
+const login = async (data) => {
   const { email, password} = data;
 
   if (!email || !password) {
@@ -71,16 +67,7 @@ exports.login = async (data) => {
   }
 
   // generate jwt Token
-  const token = jwt.sign(
-    {
-    userId: user.id,
-    email: user.email
-  },
-  process.env.JWT_SECRET,
-  {
-    expiresIn: '1d'
-  }
-);
+  const token = generateToken(user.id, user.email);
 
 // return token and user info
 return {
@@ -93,7 +80,7 @@ return {
 };
 };
 
- exports.getProfile = async (userId) => {
+ const getProfile = async (userId) => {
   const user = await prisma.user.findUnique({
     where: {
       id: Number(userId)
@@ -112,3 +99,8 @@ return {
   return user;
 }
 
+export default {
+  register,
+  login,
+  getProfile
+}

@@ -1,7 +1,7 @@
-const authService = require('../services/auth.service');
+import authService from '../services/auth.service.js';
 
 
-exports.register = async (req, res, next) => {
+const register = async (req, res, next) => {
 
   try {
     const userData = req.body;
@@ -16,7 +16,7 @@ exports.register = async (req, res, next) => {
   }
 }
 
-exports.login = async (req, res, next) => {
+const login = async (req, res, next) => {
 
   try {
     const userData = req.body;
@@ -31,7 +31,7 @@ exports.login = async (req, res, next) => {
   }
 }
 
-exports.getProfile = async (req, res, next) => {
+const getProfile = async (req, res, next) => {
 
   try {
     const userId = req.params.id;
@@ -53,3 +53,8 @@ exports.getProfile = async (req, res, next) => {
   }
 }
 
+export default {
+  register,
+  login,
+  getProfile
+}

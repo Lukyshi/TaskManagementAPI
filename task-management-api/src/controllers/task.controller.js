@@ -1,18 +1,24 @@
-const taskService = require('../services/task.service');
+import taskService from '../services/task.service.js';
 
-exports.getAllTasks = async (req, res, next) => {
+const getAllTasks = async (req, res, next) => {
   try {
-    const tasks = await taskService.getAllTasks();
+    const tasks = await taskService.getAllTasks(
+      req.user.id,
+      req.query.page,
+      req.query.limit
+    );
+
     res.status(200).json({
       success: true,
-      data: tasks
+      data: tasks,
+      pagination: result.pagination
     });
   } catch (error) {
     next(error);
   }
 }
 
-exports.getTaskById = async (req, res, next) => {
+const getTaskById = async (req, res, next) => {
   try {
     const task = await taskService.getTaskById(req.params.id);
 
@@ -32,7 +38,7 @@ exports.getTaskById = async (req, res, next) => {
   }
 }
 
-exports.createTask = async (req, res, next) => {
+const createTask = async (req, res, next) => {
 
   try {
     const user = req.body
@@ -47,7 +53,7 @@ exports.createTask = async (req, res, next) => {
   }
 }
 
-exports.updateTask = async (req, res, next) => {
+const updateTask = async (req, res, next) => {
 
   try {
     const id = req.params.id;
@@ -70,7 +76,7 @@ exports.updateTask = async (req, res, next) => {
   }
 }
 
-exports.deleteTask = async (req, res, next) => {
+const deleteTask = async (req, res, next) => {
   try {
     const id = req.params.id;
     const task = await taskService.deleteTask(id);
@@ -91,6 +97,13 @@ exports.deleteTask = async (req, res, next) => {
   }
 }
 
+export default {
+  getAllTasks,
+  getTaskById,
+  createTask,
+  updateTask,
+  deleteTask
+}
 
 
 

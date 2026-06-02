@@ -1,11 +1,16 @@
 
- const express = require('express');
- const authRoutes = require('./routes/auth');
- const taskRoutes = require('./routes/tasks');
+ require('dotenv').config();
+ import express from 'express';
+ import authRoutes from './routes/auth.route.js';
+ import taskRoutes from './routes/task.route.js';
+ import errorMiddleware from './middleware/error.middleware.js';
+ import { rateLimiter } from './middleware/rateLimiter.js';
 
  const app = express();
 
  app.use(express.json());
+
+ app.use(rateLimiter);
 
  app.use('/api/auth', authRoutes);
  
