@@ -9,6 +9,4 @@ const rateLimiter = rateLimit({
   }
 });
 
-export default {
-  rateLimiter
-}
+export default rateLimiter;

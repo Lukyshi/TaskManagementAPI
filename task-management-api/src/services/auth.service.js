@@ -1,7 +1,7 @@
 import prisma from '../config/prisma.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { generateToken } from '../utils/jwt.js';
+import generateToken from '../utils/jwt.js';
 
 // register user
 const register = async (data) => {

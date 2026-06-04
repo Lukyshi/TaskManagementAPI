@@ -1,4 +1,4 @@
-exports.validateRegister = (req, res, next) => {
+const validateRegister = (req, res, next) => {
   const {email, password, name} = req.body;
 
   if (!email || !password || !name) {
@@ -10,3 +10,7 @@ exports.validateRegister = (req, res, next) => {
   next();
 
 };
+
+export default {
+  validateRegister
+}

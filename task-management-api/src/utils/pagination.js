@@ -1,4 +1,4 @@
-exports.getPagination = (page = 1,  limit = 10) => {
+const getPagination = (page = 1,  limit = 10) => {
   page = Number(page);
   limit = Number(limit);
 
@@ -7,3 +7,7 @@ exports.getPagination = (page = 1,  limit = 10) => {
     take: limit
   };
 };
+
+export default {
+  getPagination
+}

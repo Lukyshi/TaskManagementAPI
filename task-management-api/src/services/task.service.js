@@ -1,6 +1,6 @@
 
 import prisma from '../config/prisma.js';
-import { getPagination } from '../utils/pagination.js';
+import getPagination from '../utils/pagination.js';
 
 
 // find all tasks
