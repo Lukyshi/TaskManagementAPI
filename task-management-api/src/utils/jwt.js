@@ -1,6 +1,6 @@
   import jwt from 'jsonwebtoken';
   
-  const generateToken = (payload) => {
+  export const generateToken = (payload) => {
 
     return jwt.sign(
       payload,
@@ -11,14 +11,9 @@
     );
   };
 
-  const verifyToken = (token) => {
+  export const verifyToken = (token) => {
     return jwt.verify(
       token,
       process.env.JWT_SECRET
     );
   };
-
-  export default {
-    generateToken,
-    verifyToken
-  }

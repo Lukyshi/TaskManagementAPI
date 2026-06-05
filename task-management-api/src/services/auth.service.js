@@ -1,7 +1,7 @@
 import prisma from '../config/prisma.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import generateToken from '../utils/jwt.js';
+import { generateToken, verifyToken } from '../utils/jwt.js';
 
 // register user
 const register = async (data) => {
@@ -40,7 +40,7 @@ const register = async (data) => {
 };
 
 const login = async (data) => {
-  const { email, password} = data;
+  const { email, password } = data;
 
   if (!email || !password) {
     throw new Error('Email and password are required');
@@ -59,7 +59,7 @@ const login = async (data) => {
   }
 
   // compare pass
-  const isValid = await bcrypt.compare(password, user.password);
+  const isValid = await bcrypt.compare(password, user.passwordHash);
 
   if(!isValid) {
     const error = new Error('Invalid credentials');
@@ -68,7 +68,10 @@ const login = async (data) => {
   }
 
   // generate jwt Token
-  const token = generateToken(user.id, user.email);
+  const token = generateToken({
+    id: user.id,
+    email: user.email
+  });
 
 // return token and user info
 return {
