@@ -10,6 +10,6 @@ import authController from '../controllers/auth.controller.js';
 router.post('/register', validateRegister.validateRegister, authController.register);
 router.post('/login', authController.login);
 
-router.get('/me', authController.getProfile);
+router.get('/me/:id', authController.getProfile);
 
 export default router;
