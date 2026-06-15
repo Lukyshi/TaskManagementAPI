@@ -1,4 +1,4 @@
-import jwt from '../utils/jwt.js';
+import { verifyToken } from '../utils/jwt.js';
 
 
 const authenticate = async (req, res, next) => {
@@ -12,7 +12,7 @@ const authenticate = async (req, res, next) => {
   }
 
   try {
-    const decoded = await jwt.verifyToken(token);
+    const decoded = verifyToken(token);
     req.user = decoded;
     next();
 

@@ -2,7 +2,7 @@ import taskService from '../services/task.service.js';
 
 const getAllTasks = async (req, res, next) => {
   try {
-    const tasks = await taskService.getAllTasks(
+    const result = await taskService.getAllTasks(
       req.user.id,
       req.query.page,
       req.query.limit
@@ -10,7 +10,7 @@ const getAllTasks = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: tasks,
+      data: result.tasks,
       pagination: result.pagination
     });
   } catch (error) {
@@ -20,19 +20,14 @@ const getAllTasks = async (req, res, next) => {
 
 const getTaskById = async (req, res, next) => {
   try {
-    const task = await taskService.getTaskById(req.params.id);
-
-    if (!task) {
-      return res.status(404).json({
-        success: false,
-        message : 'Task not found'
-      });
-    }
+    const id = Number(req.params.id); // user id
+    const userId = req.user.id;
+    const task = await taskService.getTaskById(id, userId);
 
     res.status(200).json({
       success: true,
       data: task
-    });
+    }); 
   } catch (error) {
     next(error);
   }
@@ -48,7 +43,7 @@ const createTask = async (req, res, next) => {
       success: true,
       data: task
     });
-  } catch (error) {
+  } catch (error) { 
     next(error);
   }
 }

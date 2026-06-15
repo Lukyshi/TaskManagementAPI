@@ -1,17 +1,17 @@
 
 import prisma from '../config/prisma.js';
-import getPagination from '../utils/pagination.js';
+import pagination from '../utils/pagination.js';
 
 
 // find all tasks
 const getAllTasks = async (userId, page, limit) => {
-  const { skip, take } = getPagination(page, limit);
+  const { skip, take } = pagination.getPagination(page, limit);
 
   const [tasks, total] = await Promise.all([
     prisma.task.findMany({
       where: {
         userId,
-        deletedAt: null
+        deleteAt: null
       },
       orderBy:{
         createdAt: 'desc'
@@ -20,10 +20,10 @@ const getAllTasks = async (userId, page, limit) => {
       take
     }),
 
-    prismam.tasl.coount({
+    prisma.task.count({
       where: {
         userId, 
-        deletedAt: null
+        deleteAt: null
       }
     })
   ]);
@@ -42,12 +42,12 @@ const getAllTasks = async (userId, page, limit) => {
 
 // find task by id
 const getTaskById =  async (id, userId) => {
-  return await prisma.task.findFirst({
+  const task = await prisma.task.findUnique({
     where: {
       id,
       userId,
-      deletedAt: null
-    }
+      deleteAt: null
+    },
   });
 
   if (!task) {
@@ -66,21 +66,20 @@ const createTask = async (data) => {
     data: {
       title: data.title.trim(),
       description: data.description || null,
-      dueDate: data.dueData || null,
+      dueDate: data.dueDate || null,
       userId: data.userId
     }
   });
 };
 
 // update task
+// i need to test updateTask
 const updateTask = async (id, userId, data) => {
   const task = await prisma.task.findFirst({
-    where: {
       where: {
-        id,
+        id: Number(id),
         userId,
         deletedAt: null
-      }
     }
   });
 
@@ -90,7 +89,7 @@ const updateTask = async (id, userId, data) => {
 
   return await prisma.task.update({
     where: {
-      id: Number(id)
+      id: Number(id) 
     },
     data: {
       title: data.title?.trim(),
