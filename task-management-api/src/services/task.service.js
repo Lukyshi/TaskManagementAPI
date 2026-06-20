@@ -42,7 +42,7 @@ const getAllTasks = async (userId, page, limit) => {
 
 // find task by id
 const getTaskById =  async (id, userId) => {
-  const task = await prisma.task.findUnique({
+  const task = await prisma.task.findFirst({
     where: {
       id,
       userId,
@@ -61,14 +61,28 @@ const createTask = async (data) => {
   if(!data.title || data.title.trim() === '') {
     throw new Error('Title is required');
   }
+   // ill add transaction acid principle
+  return await prisma.$transaction(async (tx) => {
 
-  return await prisma.task.create({
+    const task = await tx.task.create({
     data: {
       title: data.title.trim(),
       description: data.description || null,
       dueDate: data.dueDate || null,
       userId: data.userId
     }
+  });
+
+   await tx.activityLog.create({
+    data : {
+      userId : data.userId,
+      taskId : task.id,
+      action : 'TASK_CREATED'
+    } 
+  });
+
+    return task;
+
   });
 };
 
@@ -87,7 +101,10 @@ const updateTask = async (id, userId, data) => {
     throw new Error('Task not found');
   }
 
-  return await prisma.task.update({
+  //prisma.$transaction(async (tx) => {})
+  return await prisma.$transaction(async (tx) => {
+
+    const updatedTask = await tx.task.update({
     where: {
       id: Number(id) 
     },
@@ -96,6 +113,19 @@ const updateTask = async (id, userId, data) => {
       description: data.description,
       dueDate: data.dueDate
     }
+  });
+
+    await tx.activityLog.create({
+    data : {
+      userId,
+      taskId : updatedTask.id,
+      action : 'TASK_UPDATED'
+    }
+
+  });
+
+    return updatedTask;
+
   });
 };
 
@@ -113,13 +143,27 @@ const deleteTask = async (id, userId) => {
     throw new Error('Task not found');
   }
 
-  return await prisma.task.update({
+  return await prisma.$transaction(async (tx) => {
+
+    const deletedTask = await tx.task.update({
     where: {
       id: Number(id)
     },
     data: {
       deletedAt: new Date()
     }
+  });
+
+   await tx.activityLog.create({
+    data : {
+      userId,
+      taskId : deletedTask.id,
+      action : 'TASK_DELETED'
+    }
+  });
+
+  return deletedTask;
+
   });
 };
 
