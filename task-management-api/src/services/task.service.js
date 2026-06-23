@@ -93,7 +93,7 @@ const updateTask = async (id, userId, data) => {
       where: {
         id: Number(id),
         userId,
-        deletedAt: null
+        deleteAt: null
     }
   });
 
@@ -135,7 +135,7 @@ const deleteTask = async (id, userId) => {
     where: {
       id: Number(id),
       userId,
-      deletedAt: null
+      deleteAt: null
     }
   });
 
@@ -150,7 +150,7 @@ const deleteTask = async (id, userId) => {
       id: Number(id)
     },
     data: {
-      deletedAt: new Date()
+      deleteAt: new Date()
     }
   });
 

@@ -53,7 +53,8 @@ const updateTask = async (req, res, next) => {
   try {
     const id = req.params.id;
     const taskData = req.body
-    const task = await taskService.updateTask(id, taskData);
+    const userId = req.user.id
+    const task = await taskService.updateTask(id, userId, taskData);
 
     if (!task) {
       return res.status(404).json({
@@ -74,7 +75,9 @@ const updateTask = async (req, res, next) => {
 const deleteTask = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const task = await taskService.deleteTask(id);
+    const userId = req.user.id;
+
+    const task = await taskService.deleteTask(id, userId);
 
     if (!task) {
       return res.status(404).json({
